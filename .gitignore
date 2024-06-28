@@ -177,3 +177,7 @@ tags
 # wandb
 wandb
 dreambooth_dog_upscale
+diffusers/examples/dreambooth/.train_dreambooth_lora_unboothed.py.swp
+diffusers/examples/dreambooth/.train_dreambooth.py.swp
+*.swp
+

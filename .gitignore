@@ -181,3 +181,5 @@ diffusers/examples/dreambooth/.train_dreambooth_lora_unboothed.py.swp
 diffusers/examples/dreambooth/.train_dreambooth.py.swp
 *.swp
 
+datasets/kevin_anim_1
+dreambooth_kevin_Jul1_upscale_15Samples

@@ -538,7 +538,7 @@ def parse_args(input_args=None):
             raise ValueError("You must specify prompt for class images.")
     else:
         # logger is not available yet
-        rp.debug_comment(rp.format_current_date("pst"))# --> Thu Jun 27, 2024 at 11:21:59PM PDT
+        rp.debug_comment(rp.format_current_date("pst"))# --> Mon Jul 01, 2024 at 4:10:48PM PDT
         if args.class_data_dir is not None:
             warnings.warn("You need not use --class_data_dir without --with_prior_preservation.")
         if args.class_prompt is not None:
@@ -571,8 +571,8 @@ class DreamBoothDataset(Dataset):
         tokenizer_max_length=None,
     ):
 
-        rp.debug_comment(instance_data_root)# --> dog
-        rp.debug_comment(instance_prompt)# --> a sks dog
+        rp.debug_comment(instance_data_root)# --> /root/CleanCode/Sandbox/Loras/datasets/kevin_anim_1/rgb_on_white_256_train_15
+        rp.debug_comment(instance_prompt)# --> a sks man
         rp.debug_comment(tokenizer)# --> None
         rp.debug_comment(class_data_root)# --> None
         rp.debug_comment(class_prompt)# --> None
@@ -894,7 +894,7 @@ def main(args):
         args.pretrained_model_name_or_path, subfolder="unet", revision=args.revision, variant=args.variant
     )
 
-    rp.debug_comment(rp.format_current_date('PST'))# --> Thu Jun 27, 2024 at 11:22:30PM PDT
+    rp.debug_comment(rp.format_current_date('PST'))# --> Mon Jul 01, 2024 at 4:11:18PM PDT
     rp.debug_comment(rp.get_module_path(unet))# --> /root/micromamba/envs/vaetuner/lib/python3.10/site-packages/diffusers/models/unets/unet_2d_condition.py
     rp.debug_comment(type(unet))# --> <class 'diffusers.models.unets.unet_2d_condition.UNet2DConditionModel'>
 
@@ -989,7 +989,7 @@ def main(args):
 
     def load_model_hook(models, input_dir):
 
-        rp.debug_comment(input_dir)# --> dreambooth_dog_upscale/checkpoint-2000
+        rp.debug_comment(input_dir)# --> dreambooth_dog_upscale/checkpoint-2500
 
         unet_ = None
         text_encoder_ = None
@@ -1239,11 +1239,11 @@ def main(args):
 
             rp.debug_comment(type(batch))# --> Error: no signature found for builtin type <class 'dict'>
             rp.debug_comment(list(batch))# --> ['input_ids', 'pixel_values']
-            rp.debug_comment(batch['input_ids'].shape)# --> torch.Size([4, 77, 4096])
+            rp.debug_comment(batch['input_ids'].shape)# --> torch.Size([3, 77, 4096])
             #In deepFloyd, pixel_values is the full-resolution RGB image 
-            rp.debug_comment(batch['pixel_values'].shape)# --> torch.Size([4, 3, 256, 256])
-            rp.debug_comment(batch['pixel_values'].min())# --> tensor(-0.9216, device='cuda:0')
-            rp.debug_comment(batch['pixel_values'].max())# --> tensor(0.8824, device='cuda:0')
+            rp.debug_comment(batch['pixel_values'].shape)# --> torch.Size([3, 3, 256, 256])
+            rp.debug_comment(batch['pixel_values'].min())# --> tensor(-0.9843, device='cuda:0')
+            rp.debug_comment(batch['pixel_values'].max())# --> tensor(1., device='cuda:0')
 
             with accelerator.accumulate(unet):
                 pixel_values = batch["pixel_values"].to(dtype=weight_dtype)
@@ -1266,8 +1266,8 @@ def main(args):
                 )
                 timesteps = timesteps.long()
 
-                rp.debug_comment(timesteps)# --> tensor([942, 260, 171,  16], device='cuda:0')
-                rp.debug_comment((step, bsz, channels, height, width))# --> (0, 4, 3, 256, 256)
+                rp.debug_comment(timesteps)# --> tensor([914, 154, 139], device='cuda:0')
+                rp.debug_comment((step, bsz, channels, height, width))# --> (3, 3, 3, 256, 256)
                 rp.debug_comment(noise_scheduler)# --> 'DDPMScheduler {\n  "_class_name": "DDPMScheduler",\n  "_diffusers_version": "0.30.0.dev0",\n  "beta_end": 0.02,\n  "beta_schedule": "squaredcos_cap_v2",\n  "beta_start": 0.0001,\n  "clip_sample": true,\n  "clip_sample_range": 1.0,\n  "dynamic_thresholding_ratio": 0.95,\n  "lambda_min_clipped": -5.1,\n  "num_train_timesteps": 1000,\n  "prediction_type": "epsilon",\n  "rescale_betas_zero_snr": false,\n  "sample_max_value": 1.0,\n  "steps_offset": 0,\n  "thresholding": true,\n  "timestep_spacing": "leading",\n  "trained_betas": null,\n  "variance_type": "learned_range"\n}\n'
                 rp.debug_comment(type(noise_scheduler))# --> <class 'diffusers.schedulers.scheduling_ddpm.DDPMScheduler'>
                 rp.debug_comment(rp.get_module_path(noise_scheduler))# --> /root/micromamba/envs/vaetuner/lib/python3.10/site-packages/diffusers/schedulers/scheduling_ddpm.py
@@ -1276,10 +1276,10 @@ def main(args):
                 # (this is the forward diffusion process)
                 noisy_model_input = noise_scheduler.add_noise(model_input, noise, timesteps)
 
-                rp.debug_comment(model_input.shape)# --> torch.Size([4, 3, 256, 256])
-                rp.debug_comment(model_input.std())# --> tensor(0.5336, device='cuda:0')
-                rp.debug_comment(noisy_model_input.shape)# --> torch.Size([4, 3, 256, 256])
-                rp.debug_comment(noisy_model_input.std())# --> tensor(0.7094, device='cuda:0')
+                rp.debug_comment(model_input.shape)# --> torch.Size([3, 3, 256, 256])
+                rp.debug_comment(model_input.std())# --> tensor(0.7364, device='cuda:0')
+                rp.debug_comment(noisy_model_input.shape)# --> torch.Size([3, 3, 256, 256])
+                rp.debug_comment(noisy_model_input.std())# --> tensor(0.8532, device='cuda:0')
 
                 # Get the text embedding for conditioning
                 if args.pre_compute_text_embeddings:
@@ -1302,14 +1302,14 @@ def main(args):
 
                 rp.debug_comment(unwrap_model(unet).config.in_channels)# --> 6
                 rp.debug_comment(channels * 2)# --> 6
-                rp.debug_comment(noisy_model_input.shape)# --> torch.Size([4, 6, 256, 256])
+                rp.debug_comment(noisy_model_input.shape)# --> torch.Size([3, 6, 256, 256])
 
                 if args.class_labels_conditioning == "timesteps":
                     class_labels = timesteps
                 else:
                     class_labels = None
 
-                rp.debug_comment(class_labels)# --> tensor([942, 260, 171,  16], device='cuda:0')
+                rp.debug_comment(class_labels)# --> tensor([914, 154, 139], device='cuda:0')
 
                 # Predict the noise residual
                 model_pred = unet(
@@ -1320,7 +1320,7 @@ def main(args):
                     return_dict=False,
                 )[0]
 
-                rp.debug_comment(model_pred.shape)# --> torch.Size([1, 6, 256, 256])
+                rp.debug_comment(model_pred.shape)# --> torch.Size([3, 6, 256, 256])
 
                 # if model predicts variance, throw away the prediction. we will only train on the
                 # simplified training objective. This means that all schedulers using the fine tuned
@@ -1414,7 +1414,7 @@ def main(args):
                     torch_dtype=weight_dtype,
                 )
 
-                rp.debug_comment(rp.format_current_date('PST'))# --> Thu Jun 27, 2024 at 11:22:44PM PDT
+                rp.debug_comment(rp.format_current_date('PST'))# --> Tue Jul 02, 2024 at 12:34:35AM PDT
                 rp.debug_comment(rp.get_module_path(pipeline))# --> /root/micromamba/envs/vaetuner/lib/python3.10/site-packages/diffusers/pipelines/deepfloyd_if/pipeline_if_superresolution.py
                 rp.debug_comment(type(pipeline))# --> <class 'diffusers.pipelines.deepfloyd_if.pipeline_if_superresolution.IFSuperResolutionPipeline'>
 
@@ -1463,9 +1463,9 @@ def main(args):
         # load attention processors
         pipeline.load_lora_weights(args.output_dir, weight_name="pytorch_lora_weights.safetensors")
             
-        rp.debug_comment(rp.format_current_date('PST'))
-        rp.debug_comment(rp.get_module_path(pipeline))
-        rp.debug_comment(type(pipeline))
+        rp.debug_comment(rp.format_current_date('PST'))# --> Sat Jun 29, 2024 at 9:44:51PM PDT
+        rp.debug_comment(rp.get_module_path(pipeline))# --> /root/micromamba/envs/vaetuner/lib/python3.10/site-packages/diffusers/pipelines/deepfloyd_if/pipeline_if_superresolution.py
+        rp.debug_comment(type(pipeline))# --> <class 'diffusers.pipelines.deepfloyd_if.pipeline_if_superresolution.IFSuperResolutionPipeline'>
 
         # run inference
         images = []
